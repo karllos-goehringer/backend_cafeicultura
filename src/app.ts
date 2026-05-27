@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import session from "express-session";
 const MySQLStoreFactory = require("express-mysql-session");
 import cors from "cors";
@@ -6,13 +7,17 @@ import dotenv from "dotenv";
 import { pool } from "./shared/config/database";
 
 // Rotas
-import usuarioRotas from "./features/auth/auth.routes";
-import proprietarioRotas from "./features/proprietarios/proprietario.routes";
-import consultorTecnicoRotas from "./features/consultortecnico/consultor.routes";
+import authRotas from "./features/auth/auth.routes";
+import usuarioRotas from "./features/usuario/usuario.routes";
+import proprietarioRotas from "./features/proprietario/proprietario.routes";
 
 dotenv.config(); // Carrega as variáveis de ambiente do .env
 
 const app = express();
+
+// --- Configuração do View Engine (EJS) ---
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 // --- Configuração do CORS ---
 // Define a origem permitida com base no ambiente (produção ou desenvolvimento)
@@ -76,8 +81,13 @@ app.use(sessMiddleware); // Aplica o middleware de sessão
 
 // --- Registra as rotas da API ---
 const API_VERSION = "/api/v1";
+app.use(`${API_VERSION}/auth`, authRotas);
 app.use(`${API_VERSION}/usuarios`, usuarioRotas);
 app.use(`${API_VERSION}/proprietarios`, proprietarioRotas);
-app.use(`${API_VERSION}/consultores-tecnicos`, consultorTecnicoRotas);
+
+// Rota de interface para teste manual
+app.get("/teste-proprietario", (req, res) => {
+  res.render("teste-proprietario");
+});
 
 export default app;

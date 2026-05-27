@@ -6,7 +6,7 @@ import AuthRepository from "../auth/auth.repository";
 class ConsultorTecnicoRepository {
   constructor(
     private db: Pool,
-    private authRepo: AuthRepository // Injetamos o repo de Auth para usar seu método de insert
+    private authRepo: AuthRepository,
   ) {}
 
   public async salvarComTransacao(consultor: ConsultorTecnico, credencial: Credencial): Promise<number> {

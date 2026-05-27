@@ -4,7 +4,6 @@ import { IAuthRow } from "./auth.model";
 
 class AuthRepository {
   constructor(private db: Pool) {}
-
   // Este método é chamado POR OUTROS repositórios (Proprietário ou Consultor)
   // passando a conexão da transação aberta.
   public async salvarCredencial(credencial: Credencial, idUsuarioRef: number, conn: PoolConnection): Promise<void> {
