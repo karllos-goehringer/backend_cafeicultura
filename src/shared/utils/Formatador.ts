@@ -23,7 +23,7 @@ class Formatador {
    * @param valor O valor a ser formatado (pode ser string, número ou nulo).
    * @returns A string formatada, ex: "1.234,567".
    */
-  public static decimal(valor: any): string {
+  public static decimal(valor: number | string): string {
     if (valor === null || valor === undefined) {
       return '0,00';
     }
