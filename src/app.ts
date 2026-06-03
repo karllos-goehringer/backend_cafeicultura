@@ -8,8 +8,8 @@ import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { prisma } from "./shared/config/database";
 
 // Rotas
-import usuarioRotas from "./features/auth/auth.routes";
-import proprietarioRotas from "./features/proprietarios/proprietario.routes";
+import authRotas from "./features/auth/auth.routes";
+import proprietarioRotas from "./features/proprietario/proprietario.routes";
 import consultorTecnicoRotas from "./features/consultortecnico/consultor.routes";
 
 dotenv.config(); // Carrega as variáveis de ambiente do .env
@@ -58,7 +58,7 @@ const sessMiddleware = session({
       dbRecordIdIsSessionId: true, // Usa o código hash do cookie (sid) como chave primária (id) da tabela
     },
   ),
-  secret: process.env.SESSION_SECRET!, // Segredo para assinar o cookie de sessão
+  secret: process.env.SESSION_SECRET || "seu-segredo-super-secreto-aqui",
   resave: false, // Evita salvar sessões que não foram modificadas
   saveUninitialized: false, // Evita salvar sessões novas que não foram inicializadas/modificadas
   proxy: true,
@@ -76,7 +76,7 @@ app.use(sessMiddleware); // Aplica o middleware de sessão
 
 // --- Registra as rotas da API ---
 const API_VERSION = "/api/v1";
-app.use(`${API_VERSION}/usuarios`, usuarioRotas);
+app.use(`${API_VERSION}/auth`, authRotas);
 app.use(`${API_VERSION}/proprietarios`, proprietarioRotas);
 app.use(`${API_VERSION}/consultores-tecnicos`, consultorTecnicoRotas);
 

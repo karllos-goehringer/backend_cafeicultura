@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
+  
 }
 
 model consultorestecnicos {
@@ -18,12 +19,22 @@ model enderecos {
   uf            String @db.Char(2)
   pais          String @db.VarChar(20)
   cep           String @db.Char(9)
+  
+  propriedades  propriedades[]
+  pessoas       pessoas?
 }
 
 model pessoas {
   idPessoa_PK    Int             @id @unique(map: "idPessoa_PK_UNIQUE") @default(autoincrement()) @db.UnsignedInt
-  dataCadastro   DateTime        @unique(map: "dataCadastro_UNIQUE") @db.DateTime(0)
+  dataCadastro   DateTime        @db.DateTime(0)
+  idEndereco_FK  Int?            @unique @db.UnsignedInt
   pessoasfisicas pessoasfisicas?
+  pessoasjuridicas pessoasjuridicas?
+  usuarios       usuarios?
+  proprietarios  proprietarios?
+  enderecos      enderecos?      @relation(fields: [idEndereco_FK], references: [idEndereco_PK])
+
+  @@map("pessoas")
 }
 
 model pessoasfisicas {
@@ -38,6 +49,7 @@ model pessoasjuridicas {
   razaoSocial      String  @db.VarChar(100)
   cnpj             String  @unique(map: "cnpj_UNIQUE") @db.Char(18)
   inscEstadual     String? @unique(map: "inscEstadual_UNIQUE") @db.VarChar(45)
+  pessoas          pessoas @relation(fields: [idPeJuridica_PFK], references: [idPessoa_PK])
 }
 
 model propriedades {
@@ -47,6 +59,10 @@ model propriedades {
   idTamanho_FK      Int    @db.UnsignedInt
   nome              String @db.VarChar(25)
 
+  enderecos         enderecos @relation(fields: [idEndereco_FK], references: [idEndereco_PK])
+  proprietarios     proprietarios @relation(fields: [idProprietario_FK], references: [idProprietario_PFK])
+  tamanhos          tamanhos @relation(fields: [idTamanho_FK], references: [idTamanho_PK])
+
   @@index([idEndereco_FK], map: "propriedade_endereco_idx")
   @@index([idProprietario_FK], map: "propriedade_proprietario_idx")
   @@index([idTamanho_FK], map: "propriedade_tamanho_idx")
@@ -54,12 +70,15 @@ model propriedades {
 
 model proprietarios {
   idProprietario_PFK Int @id @unique(map: "idProprietario_PFK_UNIQUE") @db.UnsignedInt
+  pessoa             pessoas @relation(fields: [idProprietario_PFK], references: [idPessoa_PK])
+  propriedades       propriedades[]
 }
 
 model tamanhos {
   idTamanho_PK Int    @id @unique(map: "idTamanho_PK_UNIQUE") @default(autoincrement()) @db.UnsignedInt
   valor        Float  @db.Float
   medida       String @db.VarChar(7)
+  propriedades propriedades[]
 }
 
 model usuarios {
@@ -67,14 +86,18 @@ model usuarios {
   email         String @unique(map: "email_UNIQUE") @db.VarChar(50)
   telefone      String @unique(map: "telefone_UNIQUE") @db.Char(15)
   senha         String @db.VarChar(500)
+  
+  pessoas       pessoas @relation(fields: [idUsuario_PFK], references: [idPessoa_PK])
 
   @@id([idUsuario_PFK, telefone, email])
 }
 
 /// Model criado manualmente para lidar com Session
 model Session {
-  id        String   @id
-  sid       String   @unique
+  id        String   @id @map("sessionid")
+  sid      String   @unique(map: "sid_UNIQUE") @db.VarChar(191)
   data      String   @db.Text 
-  expiresAt DateTime
+  expiresAt DateTime @map("expires")
+
+  @@map("Session")
 }
