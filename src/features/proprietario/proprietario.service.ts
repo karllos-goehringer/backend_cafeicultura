@@ -11,6 +11,19 @@ export default class ProprietarioService {
   constructor(private repo: ProprietarioRepository) {}
 
   public async cadastrar(dados: CreateProprietarioDTO): Promise<number> {
+    // 0. Validar duplicação de CPF/CNPJ
+    if (dados.tipoPessoa === "fisica") {
+      const cpfExistente = await this.repo.verificarCPFExistente(dados.cpf!);
+      if (cpfExistente) {
+        throw new Error(`Já existe um proprietário cadastrado com o CPF: ${dados.cpf}`);
+      }
+    } else if (dados.tipoPessoa === "juridica") {
+      const cnpjExistente = await this.repo.verificarCNPJExistente(dados.cnpj!);
+      if (cnpjExistente) {
+        throw new Error(`Já existe um proprietário cadastrado com o CNPJ: ${dados.cnpj}`);
+      }
+    }
+
     // 1. Determinar e instanciar o perfil (PF ou PJ)
     let perfil: Pessoa;
     if (dados.tipoPessoa === "fisica") {
@@ -21,7 +34,7 @@ export default class ProprietarioService {
       throw new Error("Tipo de pessoa inválido.");
     }
     // instanciar credencial
-    const credencial = new Credencial(dados.email, dados.telefone, dados.senha);
+    const credencial = new Credencial(dados.email as string, dados.telefone as string, dados.senha as string);
     await credencial.criptografarSenha();
     const proprietario = new Proprietario(
       perfil,
@@ -58,14 +71,14 @@ export default class ProprietarioService {
     };
   }
 
-  public async criarEndereco(dados: any, pessoaId: number): Promise<number> {
+  public async criarEndereco(dados: Record<string, unknown>, pessoaId: number): Promise<number> {
     const endereco = new Endereco(
-      dados.cidade,
-      dados.bairro,
-      dados.cep || dados.cep,
-      dados.uf || dados.uf,
-      dados.pais || "Brasil",
-      dados.logradouro,
+      dados.cidade as string,
+      dados.bairro as string,
+      dados.cep as string || dados.cep as string,
+      dados.uf as string || dados.uf as string,
+      dados.pais as string || "Brasil",
+      dados.logradouro as string,
       pessoaId // O ID será o próprio pessoaId no banco
     );
     return await this.repo.cadastrarEndereco(endereco, pessoaId);
@@ -95,7 +108,7 @@ export default class ProprietarioService {
     // 1. Preparar credenciais (tratar senha se fornecida)
     let senhaFinal = existente.credencial.senha;
     if (dados.senha) {
-      const cred = new Credencial(dados.email || existente.email, dados.telefone || existente.telefone, dados.senha);
+      const cred = new Credencial(dados.email as string || existente.email as string, dados.telefone as string || existente.telefone as string, dados.senha as string);
       await cred.criptografarSenha();
       senhaFinal = cred.senha;
     }
@@ -105,7 +118,7 @@ export default class ProprietarioService {
     if (existente.tipoUser === "PF") {
       const pfAtual = existente.perfil as PessoaFisica;
       perfil = new PessoaFisica(
-        dados.nome ?? pfAtual.nomeExibicao,
+        dados.nome as string ?? pfAtual.nomeExibicao,
         pfAtual.cpf,
         pfAtual.dataCadastro,
         id,
@@ -114,9 +127,9 @@ export default class ProprietarioService {
     } else {
       const pjAtual = existente.perfil as PessoaJuridica;
       perfil = new PessoaJuridica(
-        dados.razaoSocial ?? pjAtual.razaoSocial,
+        dados.razaoSocial as string?? pjAtual.razaoSocial,
         pjAtual.cnpj,
-        dados.inscrEstadual ?? pjAtual.inscricaoEstadual,
+        dados.inscrEstadual as string ?? pjAtual.inscricaoEstadual,
         pjAtual.dataCadastro,
         id,
         pjAtual.endereco
@@ -125,22 +138,22 @@ export default class ProprietarioService {
 
     const proprietarioAtualizado = new Proprietario(
       perfil,
-      dados.email ?? existente.email,
-      dados.telefone ?? existente.telefone,
+      dados.email as string ?? existente.email as string,
+      dados.telefone as string ?? existente.telefone as string,
       senhaFinal
     );
 
     await this.repo.atualizarProprietario(proprietarioAtualizado);
   }
 
-  public async atualizarEndereco(pessoaId: number, dados: any): Promise<void> {
+  public async atualizarEndereco(pessoaId: number, dados: Record<string, unknown>): Promise<void> {
     const endereco = new Endereco(
-      dados.cidade,
-      dados.bairro,
-      dados.cep || dados.cep,
-      dados.uf || dados.uf,
-      dados.pais || "Brasil",
-      dados.logradouro,
+      dados.cidade as string,
+      dados.bairro as string,
+      dados.cep as string || dados.cep as string,
+      dados.uf as string || dados.uf as string,
+      dados.pais as string || "Brasil",
+      dados.logradouro as string,
       pessoaId
     );
     await this.repo.atualizarEndereco(endereco, pessoaId);

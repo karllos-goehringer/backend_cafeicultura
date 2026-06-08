@@ -20,8 +20,9 @@ class ConsultorTecnicoController {
         mensagem: "Consultor Técnico cadastrado com sucesso", 
         id: novoId 
       });
-    } catch (error: any) {
-      res.status(400).json({ mensagem: error.message });
+    } catch (error: unknown) {
+      const mensagem = error instanceof Error ? error.message : "Erro ao cadastrar consultor técnico:" ;
+      res.status(400).json({ mensagem });
     };
   };
 }

@@ -27,8 +27,9 @@ class UsuarioController {
       }
 
       res.status(200).json(perfil);
-    } catch (error: any) {
-      res.status(500).json({ mensagem: error.message || "Erro interno ao buscar perfil." });
+    } catch (error: unknown) {
+      const mensagem = error instanceof Error ? error.message : "Erro interno ao buscar perfil.";
+      res.status(500).json({ mensagem });
     }
   }
 }

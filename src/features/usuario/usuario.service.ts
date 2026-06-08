@@ -26,7 +26,7 @@ export default class UsuarioService {
       email: usuario.email,
       telefone: usuario.telefone,
       documento: usuario.documentos || [],
-      dataCadastro: usuario.idPessoa ? (usuario as any)._pessoa.dataCadastro : new Date(),
+      dataCadastro: usuario.idPessoa ? (usuario as unknown as { _pessoa: { dataCadastro: Date } })._pessoa.dataCadastro : new Date(),
       endereco: usuario.endereco ? {
         idEndereco: usuario.endereco.idEndereco || 0,
         cidade: usuario.endereco.cidade,

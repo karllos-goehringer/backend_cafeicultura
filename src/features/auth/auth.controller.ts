@@ -30,8 +30,9 @@ class AuthController {
       };
 
       res.status(200).json(resposta);
-    } catch (error: any) {
-      res.status(401).json({ mensagem: error.message });
+    } catch (error: unknown) {
+      const mensagem = error instanceof Error ? error.message : "Erro de autenticação";
+      res.status(401).json({ mensagem });
     }
   }
 

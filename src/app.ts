@@ -10,8 +10,9 @@ import { prisma } from "./shared/config/database";
 // Rotas
 import authRotas from "./features/auth/auth.routes";
 import proprietarioRotas from "./features/proprietario/proprietario.routes";
+import usuarioRotas from "./features/usuario/usuario.routes";
 import consultorTecnicoRotas from "./features/consultortecnico/consultor.routes";
-
+import propriedadeRotas from "./features/propriedade/propriedade.routes";
 dotenv.config(); // Carrega as variáveis de ambiente do .env
 
 const app = express();
@@ -78,6 +79,8 @@ app.use(sessMiddleware); // Aplica o middleware de sessão
 const API_VERSION = "/api/v1";
 app.use(`${API_VERSION}/auth`, authRotas);
 app.use(`${API_VERSION}/proprietarios`, proprietarioRotas);
+app.use(`${API_VERSION}/propriedades`, propriedadeRotas);
+app.use(`${API_VERSION}/usuarios`, usuarioRotas);
 app.use(`${API_VERSION}/consultores-tecnicos`, consultorTecnicoRotas);
 
 export default app;

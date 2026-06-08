@@ -15,8 +15,8 @@ class PropriedadeController {
       const id = await this.service.cadastrar(req.body, idUsuario);
       
       res.status(201).json({ mensagem: "Propriedade cadastrada com sucesso", id });
-    } catch (error: any) {
-      res.status(403).json({ mensagem: error.message }); // 403 Forbidden ou 400
+    } catch (error: unknown) {
+      res.status(403).json({ mensagem: (error as Error).message }); // 403 Forbidden ou 400
     };
   };
 
@@ -26,8 +26,8 @@ class PropriedadeController {
       const propriedade = await this.service.buscarPorId(Number(req.params.id), idUsuario);
       
       res.status(200).json(propriedade);
-    } catch (error: any) {
-      res.status(error.message.includes("Acesso negado") ? 403 : 404).json({ mensagem: error.message });
+    } catch (error: unknown) {
+      res.status((error as Error).message.includes("Acesso negado") ? 403 : 404).json({ mensagem: (error as Error).message });
     };
   };
 
@@ -38,8 +38,8 @@ class PropriedadeController {
     try {
       await this.service.atualizarNome(Number(req.params.id), req.body, req.session.idUsuario!);
       res.status(200).json({ mensagem: "Nome da propriedade atualizado com sucesso!" });
-    } catch (error: any) {
-      res.status(error.message.includes("Acesso negado") ? 403 : 400).json({ mensagem: error.message });
+    } catch (error: unknown) {
+      res.status((error as Error).message.includes("Acesso negado") ? 403 : 400).json({ mensagem: (error as Error).message });
     };
   };
 
@@ -50,8 +50,8 @@ class PropriedadeController {
     try {
       await this.service.atualizarTamanho(Number(req.params.id), req.body, req.session.idUsuario!);
       res.status(200).json({ mensagem: "Tamanho da propriedade atualizado com sucesso!" });
-    } catch (error: any) {
-      res.status(error.message.includes("Acesso negado") ? 403 : 400).json({ mensagem: error.message });
+    } catch (error: unknown) {
+      res.status((error as Error).message.includes("Acesso negado") ? 403 : 400).json({ mensagem: (error as Error).message });
     };
   };
 
@@ -62,8 +62,8 @@ class PropriedadeController {
     try {
       await this.service.atualizarEndereco(Number(req.params.id), req.body, req.session.idUsuario!);
       res.status(200).json({ mensagem: "Endereço da propriedade atualizado com sucesso!" });
-    } catch (error: any) {
-      res.status(error.message.includes("Acesso negado") ? 403 : 400).json({ mensagem: error.message });
+    } catch (error: unknown) {
+      res.status((error as Error).message.includes("Acesso negado") ? 403 : 400).json({ mensagem: (error as Error).message });
     };
   };
 };

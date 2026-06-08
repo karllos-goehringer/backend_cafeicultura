@@ -1,7 +1,6 @@
 import Usuario from "./usuario.entity";
 import Endereco from "../../shared/domain/endereco/endereco.vo";
 import { PrismaClient } from "@prisma/client";
-import { IUsuarioRow } from "./usuario.model";
 
 /**
  * Repositório para a entidade Usuario.

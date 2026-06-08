@@ -59,7 +59,7 @@ class PessoaJuridica extends Pessoa {
     // Esta regex aceita APENAS formatos de CNPJ:
     // - 14 dígitos (sem máscara) OU
     // - XX.XXX.XXX/XXXX-XX (com máscara)
-    if (!/^\d{14}$|^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/.test(cnpj)) {
+    if (!/^\d{14}$|^\d{2}\.\d{3}\.\d{3}\/\d{4}\d{2}$/.test(cnpj)) {
       throw new Error("CNPJ deve conter 14 dígitos ou estar no formato XX.XXX.XXX/XXXX-XX");
     }
     

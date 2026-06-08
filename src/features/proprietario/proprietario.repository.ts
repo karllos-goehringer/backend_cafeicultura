@@ -85,7 +85,7 @@ class ProprietarioRepository {
 
     const u = p.usuarios;
     const e = p.enderecos;
-
+    
     const endereco = e 
       ? new Endereco(e.logradouro, e.bairro, e.cidade, e.uf, e.pais, e.cep, e.idEndereco_PK)
       : undefined;
@@ -159,6 +159,20 @@ class ProprietarioRepository {
         });
       }
     });
+  }
+
+  public async verificarCPFExistente(cpf: string): Promise<boolean> {
+    const existe = await this.prisma.pessoasfisicas.findUnique({
+      where: { cpf }
+    });
+    return !!existe;
+  }
+
+  public async verificarCNPJExistente(cnpj: string): Promise<boolean> {
+    const existe = await this.prisma.pessoasjuridicas.findUnique({
+      where: { cnpj }
+    });
+    return !!existe;
   }
 }
 

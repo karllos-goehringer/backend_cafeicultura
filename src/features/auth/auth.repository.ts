@@ -28,7 +28,7 @@ class AuthRepository {
     entrada: string, 
     tipo: "email" | "cpf" | "cnpj"
   ): Promise<{ credencial: Credencial, nomeSessao: string } | null> {
-    let usuario: any = null;
+    let usuario = null;
 
     if (tipo === "email") {
       usuario = await this.db.usuarios.findFirst({
@@ -69,7 +69,7 @@ class AuthRepository {
     
     const nomeSessao =
       pessoa?.pessoasfisicas?.nome ||
-      (pessoa?.pessoasjuridicas as any)?.razaoSocial ||
+      (pessoa?.pessoasjuridicas as unknown as { razaoSocial: string })?.razaoSocial ||
       usuario.email ||
       "Usuário";
 

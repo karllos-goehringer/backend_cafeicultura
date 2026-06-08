@@ -51,7 +51,7 @@ class PessoaFisica extends Pessoa {
     // Esta regex aceita APENAS formatos de CPF:
     // - 11 dígitos (sem máscara) OU
     // - XXX.XXX.XXX-XX (com máscara)
-    if (!/^\d{11}$|^\d{3}\.\d{3}\.\d{3}\-\d{2}$/.test(cpf)) {
+    if (!/^\d{11}$|^\d{3}\.\d{3}\.\d{3}\d{2}$/.test(cpf)) {
       throw new Error("CPF deve conter 11 dígitos ou estar no formato XXX.XXX.XXX-XX");
     }
     
